@@ -1,26 +1,40 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 import Image from 'next/image';
 import { NextPage } from 'next';
 import { IMovie } from '../types/types';
 import { baseUrl } from '../constants/movieBaseUrl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { useAppDispatch, useAppSelector } from '../hooks/reduxHooks';
+import { showModal } from '../redux/modalWindowSlice/modalWindowSlice';
+import { loadingMovie, setCurrentMovie } from '../redux/movieSlice/movieSlice';
 
 interface Props {
   netflixOriginals: IMovie[]
 }
 
 const Banner: NextPage<Props> = memo(({netflixOriginals}) => {
-  const [movie, setMovie] = useState<IMovie | null>(null)
+  const dispatch = useAppDispatch()
+  const {movie} = useAppSelector(state => state.movieSlice)
 
   useEffect(() => {
-    setMovie(netflixOriginals[Math.floor(Math.random() * netflixOriginals.length)])
+    dispatch(setCurrentMovie(netflixOriginals[Math.floor(Math.random() * netflixOriginals.length)]))
   },[netflixOriginals])
+
+  const handleSelectMovie = () => {
+    dispatch(showModal(true))
+    dispatch(loadingMovie(true))
+  }
 
   return (
     <div className='flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-12'>
       <div className='absolute top-0 left-0 -z-10 h-[95vh] w-screen'>
-        <Image src={`${baseUrl}/${movie?.backdrop_path || movie?.poster_path}`} layout='fill' objectFit='cover'/>
+        <Image
+          src={`${baseUrl}/${movie?.backdrop_path || movie?.poster_path}`}
+          layout='fill'
+          objectFit='cover'
+          priority={true}
+        />
       </div>
 
       <h1 className='text-2xl lg:text-7xl md:text-4xl'>
@@ -35,7 +49,7 @@ const Banner: NextPage<Props> = memo(({netflixOriginals}) => {
           <FontAwesomeIcon icon={faPlay} className='h-4 w-4 text-black md:h-7 md:w-7'/>
           Play
         </button>
-        <button className='bannerButton bg-[gray]/70'>
+        <button className='bannerButton bg-[gray]/70' onClick={handleSelectMovie}>
           <FontAwesomeIcon icon={faCircleInfo} className='h-5 w-5 md:h-8 md:w-8'/>
           More Info
         </button>

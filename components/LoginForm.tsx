@@ -5,18 +5,21 @@ import { ILoginAndRegister } from '../types/types';
 import InputField from './InputField';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { LoginValidation } from '../validation/validation';
+import useAuth from '../hooks/AuthProvider';
 
 
 const LoginForm: NextPage = memo(() => {
   const [isLogin, setIsLogin] = useState<boolean>(false)
+  const {signIn, signUp} = useAuth()
   const methods = useForm<ILoginAndRegister>({
     resolver: yupResolver(LoginValidation)
   })
 
   const onSubmit: SubmitHandler<ILoginAndRegister> = async ({password, email}) => {
     if (isLogin) {
+      await signIn(email, password)
     } else {
-      
+      await signUp(email, password)
     }
   }
 

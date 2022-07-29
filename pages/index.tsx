@@ -6,6 +6,9 @@ import Banner from '../components/Banner';
 import requests from '../utils/request';
 import { IMovie } from '../types/types';
 import Row from '../components/Row';
+import useAuth from '../hooks/AuthProvider';
+import ModalWindow from '../components/ModalWindow';
+import { useAppSelector } from '../hooks/reduxHooks';
 
 
 interface Props {
@@ -20,6 +23,10 @@ interface Props {
 }
 
 const Home: NextPage<Props> = memo((props: Props) => {
+  const {isShowModal} = useAppSelector(state => state.modalSlice)
+  const {isLoading} = useAuth()
+
+  if (isLoading) return null
 
   return (
     <div className='relative h-screen bg-gradient-to-b lg:h-[140vh]'>
@@ -42,7 +49,7 @@ const Home: NextPage<Props> = memo((props: Props) => {
           <Row title='Documentaries' movies={props.documentaries}/>
         </section>
       </main>
-
+      <ModalWindow />
 
     </div>
   )

@@ -52,3 +52,12 @@ export interface IAuth {
   error: string | null
   isLoading: boolean
 }
+
+export interface IMovieSLiceInitialState {
+  movie: IMovie | null
+  isLoading: boolean
+}
+
+export interface IModalInitialState {
+  isShowModal: boolean
+}

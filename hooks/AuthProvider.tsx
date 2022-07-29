@@ -1,7 +1,12 @@
-import React, { createContext, FC, memo, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-import { createUserWithEmailAndPassword, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import React, { createContext, FC, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  User,
+} from 'firebase/auth';
 import { auth } from '../firebase';
-import { ILoginAndRegister } from '../types/types';
 import { useRouter } from 'next/router';
 import { IAuth } from '../types/types';
 
@@ -18,10 +23,10 @@ interface Props {
   children: ReactNode;
 }
 
-export const useAuthProvider: FC<Props> = memo(({children}) => {
+export const AuthProvider: FC<Props> = ({children}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState(null);
+  const [error] = useState(null);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const router = useRouter();
 
@@ -39,7 +44,7 @@ export const useAuthProvider: FC<Props> = memo(({children}) => {
     })
   }, [auth])
 
-  const authFunc = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string) => {
     setIsLoading(true);
     await createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
@@ -50,12 +55,15 @@ export const useAuthProvider: FC<Props> = memo(({children}) => {
       .finally(() => setIsLoading(false));
   };
 
-  const signUp = async ({email, password}: ILoginAndRegister) => {
-    await authFunc(email, password);
-  };
-
-  const signIn = async ({email, password}: ILoginAndRegister) => {
-    await authFunc(email, password);
+  const signIn = async (email: string, password: string) => {
+    setIsLoading(true);
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        setUser(userCredential.user);
+        router.push('/');
+      })
+      .catch((error) => alert(error.message))
+      .finally(() => setIsLoading(false));
   };
 
   const logout = async () => {
@@ -76,7 +84,7 @@ export const useAuthProvider: FC<Props> = memo(({children}) => {
       {!initialLoading && children}
     </AuthContext.Provider>
   );
-});
+};
 
 export default function useAuth() {
   return useContext(AuthContext);
