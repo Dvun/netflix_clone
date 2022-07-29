@@ -1,3 +1,5 @@
+import { User } from 'firebase/auth';
+
 export interface IGenre {
   id: number
   name: string
@@ -35,4 +37,18 @@ export interface Element {
 export enum Scroll {
   LEFT = 'left',
   RIGHT = 'right'
+}
+
+export interface ILoginAndRegister {
+  email: string
+  password: string
+}
+
+export interface IAuth {
+  user: User | null
+  signUp: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
+  logout: () => Promise<void>
+  error: string | null
+  isLoading: boolean
 }
