@@ -1,10 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IMovie, IMovieSLiceInitialState } from '../../types/types';
+import { IMovie, IMovieResponse, IMovieSLiceInitialState } from '../../types/types';
 
 
 const initialState: IMovieSLiceInitialState = {
-  movie: null,
-  isLoading: false
+  isLoading: false,
+  currentMovie: null,
+  bannerRandomMovie: null,
+  currentMovieTrailer: null,
+  genres: []
 }
 
 const movieSlice = createSlice({
@@ -14,11 +17,19 @@ const movieSlice = createSlice({
 
     loadingMovie: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload
+      state.currentMovie = null
     },
 
-    setCurrentMovie: (state, action: PayloadAction<IMovie | null>) => {
+    setBannerRandomMovie: (state, action: PayloadAction<IMovie | null>) => {
+      state.bannerRandomMovie = action.payload
+    },
+
+    setCurrentMovie: (state, action: PayloadAction<IMovieResponse | null>) => {
       state.isLoading = false
-      state.movie = action.payload
+      state.currentMovie = action.payload
+      const index: any = action.payload?.videos?.results.findIndex((value: any) => value.type === 'Trailer')
+      state.currentMovieTrailer = action.payload?.videos.results[index]?.key || null
+      state.genres = action.payload?.genres || []
     }
 
   }
@@ -27,5 +38,6 @@ const movieSlice = createSlice({
 export default movieSlice.reducer
 export const {
   loadingMovie,
+  setBannerRandomMovie,
   setCurrentMovie
 } = movieSlice.actions

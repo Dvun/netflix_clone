@@ -5,5 +5,5 @@ import modalWindowSlice from './modalWindowSlice/modalWindowSlice';
 
 export const rootReducer = combineReducers({
   movieSlice: movieSlice,
-  modalSlice: modalWindowSlice
+  modalSlice: modalWindowSlice,
 })
