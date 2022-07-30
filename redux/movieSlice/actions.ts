@@ -4,7 +4,7 @@ import { IMovie, IMovieResponse } from '../../types/types';
 import axios from 'axios'
 
 
-export const getCurrentMovie = (movie: IMovie) => async (dispatch: AppDispatch) => {
+export const getCurrentMovie = (movie: IMovie | null) => async (dispatch: AppDispatch) => {
   dispatch(loadingMovie(true))
   await axios.get<IMovieResponse>(
     `https://api.themoviedb.org/3/${movie?.media_type === 'tv' ?
